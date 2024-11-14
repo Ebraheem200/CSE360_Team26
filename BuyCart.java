@@ -1,12 +1,10 @@
 package application;
 
 import java.util.ArrayList;
-
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -24,8 +22,8 @@ public class BuyCart {
 	private TextField sortcategory, sortcondition, sortstring;
 	private ArrayList <Book> arrayList_Book; 
 	private ArrayList <listViewCell> arrayList_LVC;
-	private ListView <listViewCell> listbooks;
-	
+	private ListView <Book> listbooks;
+	private Book selected;
 	public BuyCart() {
 		remove = new Button("Remove");
 		order = new Button("Place Order");
@@ -35,12 +33,20 @@ public class BuyCart {
         sortcondition = new TextField();
         sortstring = new TextField();
         listbooks = new ListView<>();
+        this.arrayList_Book = new ArrayList<>();
 	}
 
 	public void showScene() {
 		Stage cartStage = new Stage();
         cartStage.setTitle("User View");
-
+        
+        
+        
+        listbooks.setOnMousePressed( c -> {
+            // Get the selected item
+           this.selected = listbooks.getSelectionModel().getSelectedItem();
+        });
+        
         // Create the root layout
         BorderPane root = new BorderPane();
         
@@ -54,6 +60,7 @@ public class BuyCart {
         
         //Set button actions
         returnButton.setOnAction(e -> {cartStage.close();});
+        remove.setOnAction(e ->{arrayList_Book.remove(selected); listbooks.getItems().setAll(arrayList_Book);});
         // Create an HBox to hold the buttons and add them
         VBox buttonBox = new VBox(20);  
         buttonBox.getChildren().addAll(remove, order);
@@ -62,7 +69,6 @@ public class BuyCart {
         // Set the buttonBox in a position on the layout, like at the top
         root.setCenter(buttonBox);
 
-        // Optionally add other elements (like `listbooks`) to different regions of the BorderPane
         VBox listBox = new VBox(20);
         listBox.setPadding(new Insets(10));
         listBox.setPrefWidth(700);
@@ -99,5 +105,10 @@ public class BuyCart {
 	
 	private void updateListFromDataBase() {
 		
+	}
+	
+	public void updatelist(Book book) {
+		arrayList_Book.add(book);
+		listbooks.getItems().setAll(arrayList_Book);
 	}
 }
