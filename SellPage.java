@@ -1,7 +1,12 @@
 package application;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-
+import java.util.function.UnaryOperator;
+import java.util.regex.Pattern;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -9,8 +14,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -21,29 +26,26 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 public class SellPage {
-	private Button refresh, cart, add, sell, remove, returnButton;
-	private TextField sortcategory, sortcondition, sortstring;
+	private Button add, sell, remove, returnButton;
+	//private TextField sortcategory, sortcondition, sortstring;
 	private ArrayList <Book> arrayList_Book; 
-	private ArrayList <listViewCell> arrayList_LVC;
-	private ListView <listViewCell> listbooks;
+	//private ArrayList <listViewCell> arrayList_LVC;
+	private ListView <Book> listbooks;
 
 
 		public SellPage() {
 			add = new Button("Add to Sell");
 			remove = new Button("Remove");
 			sell = new Button("Sell");
-			refresh = new Button("refresh");
 			returnButton = new Button("Return");
-			sortcategory = new TextField();
-	        sortcondition = new TextField();
-	        sortstring = new TextField();
 	        listbooks = new ListView<>();
+	        this.arrayList_Book = new ArrayList<Book>();
 		}
 
 		public void showScene() {
 			Stage sellStage = new Stage();
 	        sellStage.setTitle("User View");
-
+	        
 	        // Create the root layout
 	        BorderPane root = new BorderPane();
 	        
@@ -54,20 +56,17 @@ public class SellPage {
 	        sell.setPrefSize(150, 50);
 	        add.setStyle("-fx-background-color: maroon; -fx-text-fill: white;");
 	        add.setPrefSize(150, 50);
+	        add.setOnAction(e ->{sellForm();});
 	        
 	        returnButton.setStyle("-fx-background-color: maroon; -fx-text-fill: white; -fx-font-size: 16px;");
 	        returnButton.setPrefSize(200, 75);
-	        
-	        //Set button actions
 	        returnButton.setOnAction(e -> {sellStage.close();});
-	        add.setOnAction(e ->{sellForm();});
-	        
 	        // Create an HBox to hold the buttons and add them
 	        VBox buttonBox = new VBox(20);  
 	        buttonBox.getChildren().addAll(remove, sell, add);
 	        buttonBox.setAlignment(Pos.CENTER);
 
-	        // Set the buttonBox in a position on the layout, like at the top
+	        
 	        root.setCenter(buttonBox);
 
 	        // Optionally add other elements (like `listbooks`) to different regions of the BorderPane
@@ -143,7 +142,17 @@ public class SellPage {
 	        Label PriceLabel = new Label("Price");
 	        formGrid.add(PriceLabel, 0, 4);
 	        
+	        Pattern validDoubleText = Pattern.compile("-?\\d*(\\.\\d{0,2})?");
+	        UnaryOperator<TextFormatter.Change> filter = change -> {
+	            String newText = change.getControlNewText();
+	            if (validDoubleText.matcher(newText).matches()) {
+	                return change;
+	            }
+	            return null;
+	        };
+	        TextFormatter<String> textFormatter = new TextFormatter<>(filter);
 	        TextField PriceField = new TextField();
+	        PriceField.setTextFormatter(textFormatter);
 	        formGrid.add(PriceField, 1, 4);
 	        
 	        Label inputLabel = new Label("");
@@ -152,18 +161,47 @@ public class SellPage {
 	        // Add Submit button
 	        Button submitButton = new Button("Submit");
 	        submitButton.setStyle("-fx-background-color: maroon; -fx-text-fill: white;");
-	        formGrid.add(submitButton, 1, 5);        
+	        formGrid.add(submitButton, 1, 5);
+	        
 	        // Set action for Submit button
 	        submitButton.setOnAction(event -> {
-	        	 String newTitle = TitleField.getText();
-	             String newAuthor = AuthorField.getText();
-	             
-	             //Check valid user info
-	             if(newTitle.isEmpty()||newAuthor.length()<10||newAuthor.isEmpty()) {
+	        	//Check valid user info
+	        	if(TitleField.getText().isEmpty()||Condition.getValue()==null||AuthorField.getText().isEmpty()||Double.parseDouble(PriceField.getText())<=0) {
 	            	 inputLabel.setTextFill(Color.RED);
 	            	 inputLabel.setText("Please make sure you have filled in all details");
-	             } else{addSellStage.close();}});
-	        Scene formScene = new Scene(formGrid, 600, 700);
+	             }else{Book temp = new Book();temp.setTitle(TitleField.getText());temp.setAuthor(AuthorField.getText()); 
+	             		temp.setCondition(Condition.getValue()); temp.setPrice(Double.parseDouble(PriceField.getText()));
+	             		arrayList_Book.add(temp);
+	             		listbooks.getItems().add(temp);
+	             		addSellStage.close();}});
+	        
+	        remove.setOnAction(e ->{});
+	        sell.setOnAction(e -> {
+	        	try {
+	        	    File file = new File("BooksForSale.txt");
+	        	    boolean append = file.exists() && file.length() > 0;
+
+	        	    try (FileOutputStream fos = new FileOutputStream(file, true);
+	        	         ObjectOutputStream write = append ?
+	        	                 new ObjectOutputStream(fos) {
+	        	                     @Override
+	        	                     protected void writeStreamHeader() throws IOException {
+	        	                         reset(); // Skip header when appending
+	        	                     }
+	        	                 } : new ObjectOutputStream(fos)) {
+
+	        	        for (Book temp : arrayList_Book) {
+	        	            write.writeObject(temp);
+	        	        }
+	        	    }
+	        	} catch (IOException c) {
+	        	    c.printStackTrace();
+	        	}
+	        	arrayList_Book.clear();
+	        	listbooks.getItems().clear();
+	        	});
+	        
+	        Scene formScene = new Scene(formGrid, 500, 500);
 	        addSellStage.setScene(formScene);
 	        addSellStage.showAndWait(); 
 		}
