@@ -1,8 +1,12 @@
 package application;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 
-import javafx.application.Application;
+import javax.swing.text.View;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -25,7 +29,8 @@ private Button refresh, cart, add, sell;
 private TextField sortcategory, sortcondition, sortstring;
 private ArrayList <Book> arrayList_Book; 
 private ArrayList <listViewCell> arrayList_LVC;
-private ListView <listViewCell> listbooks;
+private ListView <Book> listbooks;
+private Book selected;
 
 
 	public UserView() {
@@ -37,12 +42,31 @@ private ListView <listViewCell> listbooks;
         sortcondition = new TextField();
         sortstring = new TextField();
         listbooks = new ListView<>();
+        this.arrayList_Book = new ArrayList<>(); 
 	}
 
 	public void showScene() {
 		Stage userStage = new Stage();
         userStage.setTitle("User View");
-
+        //Read books into the list view
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("BooksForSale.txt"))) {
+            while (true) {
+                try {
+                    Book temp = (Book) ois.readObject(); 
+                    arrayList_Book.add(temp);
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (IOException e) {
+            if (!(e instanceof java.io.EOFException)) {
+                e.printStackTrace();
+            }
+        }
+        for (Book temp : arrayList_Book) {
+            listbooks.getItems().add(temp);
+        }
+    
         // Create the root layout
         BorderPane root = new BorderPane();
         
@@ -54,12 +78,20 @@ private ListView <listViewCell> listbooks;
         cart.setStyle("-fx-background-color: maroon; -fx-text-fill: white; -fx-font-size: 28px;");
         cart.setPrefSize(90, 90);
         
-        //Set button actions
+      
+        //event handler for list view
+        listbooks.setOnMousePressed(e -> {
+            // Get the selected item
+           this.selected = listbooks.getSelectionModel().getSelectedItem();
+        });
         
         BuyCart buyCart = new BuyCart();//create the cart
         SellPage sellPage  = new SellPage();// create the sellpage
         sell.setOnAction(e -> {sellPage.showScene();});
         cart.setOnAction(e -> {buyCart.showScene();}); 
+        add.setOnAction(e -> {
+		buyCart.updatelist(selected);
+        	  });
         // Create an HBox to hold the buttons and add them
         VBox buttonBox = new VBox(20);  
         buttonBox.getChildren().addAll(sell, add);
