@@ -1,4 +1,3 @@
-import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -13,7 +12,7 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 
-public class SystemData extends Application {
+public class SystemData{
     private Button transactionView, manageUserAccounts, systemData, add, removeListing, modify;
     private ListView <String> listUsers;
 
@@ -27,7 +26,8 @@ public class SystemData extends Application {
         listUsers = new ListView<>();
     }
 
-    public void start(Stage userStage){
+    public void showScene(){
+        Stage userStage = new Stage();
         userStage.setTitle("System Data");
 
         // root layout
@@ -57,6 +57,20 @@ public class SystemData extends Application {
             modifyListing();});
         modify.setOnAction(e -> {
             modifyListing();});
+
+        /*
+        TransactionView transactionPage = new TransactionView();
+        transactionPage.setOnAction(e -> {
+            userStage.close();
+            transactionPage.showScene();
+        });
+         */
+
+        ManageUserAccounts manageUserPage = new ManageUserAccounts();
+        manageUserAccounts.setOnAction(e -> {
+            userStage.close();
+            manageUserPage.showScene();
+        });
 
         VBox buttonBox1 = new VBox(20);
         buttonBox1.getChildren().addAll(add, removeListing, modify);
