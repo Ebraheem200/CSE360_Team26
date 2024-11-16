@@ -1,4 +1,3 @@
-import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -13,7 +12,7 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 
-public class ManageUserAccounts extends Application {
+public class ManageUserAccounts{
     private Button refresh, transactionView, manageUserAccounts, systemData, add, delete, modify;
     private TextField idSort, passwordSort;
     private ComboBox<String> permissionSort;
@@ -32,7 +31,8 @@ public class ManageUserAccounts extends Application {
         listUsers = new ListView<>();
     }
 
-    public void start(Stage userStage){
+    public void showScene(){
+        Stage userStage = new Stage();
         userStage.setTitle("Manage User Accounts");
 
         // root layout
@@ -60,6 +60,20 @@ public class ManageUserAccounts extends Application {
         // button actions
         add.setOnAction(e -> {modifyUsers();});
         modify.setOnAction(e -> {modifyUsers();});
+
+        /*
+        TransactionView transactionPage = new TransactionView();
+        transactionPage.setOnAction(e -> {
+            userStage.close();
+            transactionPage.showScene();
+        });
+         */
+
+        SystemData systemDataPage = new SystemData();
+        systemData.setOnAction(e -> {
+            userStage.close();
+            systemDataPage.showScene();
+        });
 
         VBox buttonBox1 = new VBox(20);
         buttonBox1.getChildren().addAll(add, delete, modify);
