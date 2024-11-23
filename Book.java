@@ -3,19 +3,19 @@ package application;
 import java.io.Serializable;
 
 public class Book implements Serializable {
-	public int code;
-	public String title;
-	public String author;
-	public String category;
-	public String condition;
-	public double price;
-	public int chosen_number;
+	public int code;// Unique code to identify the book
+	public String title;// Title of the book
+	public String author;// Author of the book
+	public String category;// Category or title of the book
+	public String condition; // Condition of the book
+	public double price; // Price of the book 
+	public int chosen_number; // Number of copies of the book 
 
 		Book(){
 			
 		}
 		
-		Book(int code, String title, String author, String category, 
+		Book(int code, String title, String author, String category, // Using a constructor to initialize a book with specific information 
 				String condition, float price, int num){
 			this.code = code;
 			this.title = title;
@@ -81,7 +81,7 @@ public class Book implements Serializable {
 		public void setChosen_number(int chosen_number) {
 			this.chosen_number = chosen_number;
 		}
-		public String toString() {
+		public String toString() { //Provides a string representation of the book object 
 		        return (title + " by " + author + " Price: $"+price+" Condition: "+condition);
 		    }
 
