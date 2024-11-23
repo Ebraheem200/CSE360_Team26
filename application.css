@@ -1,13 +1,14 @@
 /* JavaFX CSS - Leave this comment until you have at least create one rule that uses -fx-Property */
 
 .list-view { 
-  -fx-background-color: #f4f4f4;  /* Style for the ListView */
+   /* Style for the ListView */
+  -fx-background-color: #f4f4f4; 
    -fx-border-color: #cccccc;
     -fx-border-radius: 5px;
   -fx-padding: 10px;
   -fx-front-size: 14px;
-} 
-.list-view .cell { /* Style for the objects in  ListView */
+} /* Style for the objects in  ListView */
+.list-view .cell {
   -fx-background-color: white;
    -fx-border-color: #dcdcdc;
     -fx-border-width: 1px;
@@ -21,23 +22,23 @@
    -fx-fit-width: 50px; 
     -fx-fit-height: 75px;
      -fx_preserve-ratio: true;
-}
-.list-view .cell > .content > .text {/* Style for text elements */
+}/* Style for text elements */
+.list-view .cell > .content > .text {/
    -fx-font-size: 14px; 
     -fx-fill: #333333;
-}
-.list-view .cell > .content > .text.name {/* Style for book */
+}/* Style for book */
+.list-view .cell > .content > .text.name {
    -fx-font-weight: bold; 
     -fx-text-fill: #000000;
 
 }
-
-.list-view .cell > .content > .text.author {/* Style for author*/
+/* Style for author*/
+.list-view .cell > .content > .text.author {
    -fx-font-style: italic; 
     -fx-text-fill: #000000;
 
 }
-
+/* Style for category or genre */
 .list-view .cell > .content > .text.category {/* Style for category */
    -fx-font-style: italic; 
     -fx-text-fill: #777777;
