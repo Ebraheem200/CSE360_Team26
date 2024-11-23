@@ -1,57 +1,23 @@
-/* JavaFX CSS - Leave this comment until you have at least create one rule that uses -fx-Property */
+/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
 
-.list-view { 
-   /* Style for the ListView */
-  -fx-background-color: #f4f4f4; 
-   -fx-border-color: #cccccc;
-    -fx-border-radius: 5px;
-  -fx-padding: 10px;
-  -fx-front-size: 14px;
-} /* Style for the objects in  ListView */
-.list-view .cell {
-  -fx-background-color: white;
-   -fx-border-color: #dcdcdc;
+/* Header Styling */
+.header {
+    -fx-background-color: #E1AD01;
+    -fx-text-fill: darkred;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-padding: 15px;
+    -fx-alignment: center;
+}
+
+/* Button Styling */
+.button {
+    -fx-background-color: maroon;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 10px 20px;
+    -fx-border-color: black;
     -fx-border-width: 1px;
-  -fx-padding: 10px;
-  -fx-alignment: center-left;
-} 
-.list-view .cell > .content {
-   -fx-spacing: 10px;
+    -fx-border-radius: 5px;
 }
-.list-view .cell > .content > .image-view {
-   -fx-fit-width: 50px; 
-    -fx-fit-height: 75px;
-     -fx_preserve-ratio: true;
-}/* Style for text elements */
-.list-view .cell > .content > .text {/
-   -fx-font-size: 14px; 
-    -fx-fill: #333333;
-}/* Style for book */
-.list-view .cell > .content > .text.name {
-   -fx-font-weight: bold; 
-    -fx-text-fill: #000000;
-
-}
-/* Style for author*/
-.list-view .cell > .content > .text.author {
-   -fx-font-style: italic; 
-    -fx-text-fill: #000000;
-
-}
-/* Style for category or genre */
-.list-view .cell > .content > .text.category {/* Style for category */
-   -fx-font-style: italic; 
-    -fx-text-fill: #777777;
-
-}
-
-
-
-
-
-
-
-
-
-
-

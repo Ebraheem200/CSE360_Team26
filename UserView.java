@@ -3,13 +3,11 @@ package application;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.ArrayList;
-
-import javax.swing.text.View;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -25,87 +23,88 @@ import javafx.stage.Stage;
 
 public class UserView {
 
-private Button refresh, cart, add, sell;
-private TextField sortcategory, sortcondition, sortstring;
-private ArrayList <Book> arrayList_Book; 
-private ArrayList <listViewCell> arrayList_LVC;
-private ListView <Book> listbooks;
-private Book selected;
+    private Button refresh, cart, add, sell;
+    private TextField sortcategory, sortcondition, sortstring;
+    private ListView<Book> listbooks;
 
+    public UserView() {
+        // Buttons
+        sell = new Button("Sell");
+        add = new Button("Add to Cart");
+        refresh = new Button("Refresh");
+        cart = new Button("\uD83D\uDED2");
 
-	public UserView() {
-		sell = new Button("sell");
-		add = new Button("add");
-		refresh = new Button("refresh");
-		cart = new Button("\uD83D\uDED2");
-		sortcategory = new TextField();
+        // Input fields
+        sortcategory = new TextField();
         sortcondition = new TextField();
         sortstring = new TextField();
-        listbooks = new ListView<>();
-        this.arrayList_Book = new ArrayList<>(); 
-	}
 
-	public void showScene() {
-		Stage userStage = new Stage();
+        // ListView
+        listbooks = new ListView<>();
+        listbooks.setItems(DataManager.getSharedBooks()); // Use shared list for dynamic updates
+
+        // Set button actions
+        SellPage sellPage = new SellPage();
+        sell.setOnAction(e -> sellPage.showScene());
+
+        BuyCart buyCart = new BuyCart();
+        cart.setOnAction(e -> buyCart.showScene());
+
+        add.setOnAction(e -> {
+            Book selected = listbooks.getSelectionModel().getSelectedItem();
+            if (selected != null) {
+                buyCart.updatelist(selected); // Add book to cart
+                DataManager.getSharedBooks().remove(selected); // Remove book from shared list
+
+                // Show confirmation dialog
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Confirmation");
+                alert.setHeaderText(null);
+                alert.setContentText("Book added to cart and removed from the list!");
+                alert.showAndWait();
+            } else {
+                // Show error dialog
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("No book selected to add to cart.");
+                alert.showAndWait();
+            }
+        });
+
+        refresh.setOnAction(e -> loadBooksFromFile());
+    }
+
+    public void showScene() {
+        Stage userStage = new Stage();
         userStage.setTitle("User View");
-        //Read books into the list view
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("BooksForSale.txt"))) {
-            while (true) {
-                try {
-                    Book temp = (Book) ois.readObject(); 
-                    arrayList_Book.add(temp);
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
-            }
-        } catch (IOException e) {
-            if (!(e instanceof java.io.EOFException)) {
-                e.printStackTrace();
-            }
-        }
-        for (Book temp : arrayList_Book) {
-            listbooks.getItems().add(temp);
-        }
-    
-        // Create the root layout
+
+        // Read books into the ListView
+        loadBooksFromFile();
+
+        // Root layout
         BorderPane root = new BorderPane();
-        
-        //Add styling to buttons
+
+        // Styling for buttons
         sell.setStyle("-fx-background-color: maroon; -fx-text-fill: white;");
         sell.setPrefSize(120, 50);
         add.setStyle("-fx-background-color: maroon; -fx-text-fill: white;");
         add.setPrefSize(120, 50);
         cart.setStyle("-fx-background-color: maroon; -fx-text-fill: white; -fx-font-size: 28px;");
         cart.setPrefSize(90, 90);
-        
-      
-        //event handler for list view
-        listbooks.setOnMousePressed(e -> {
-            // Get the selected item
-           this.selected = listbooks.getSelectionModel().getSelectedItem();
-        });
-        
-        BuyCart buyCart = new BuyCart();//create the cart
-        SellPage sellPage  = new SellPage();// create the sellpage
-        sell.setOnAction(e -> {sellPage.showScene();});
-        cart.setOnAction(e -> {buyCart.showScene();}); 
-        add.setOnAction(e -> {
-		buyCart.updatelist(selected);
-        	  });
-        // Create an HBox to hold the buttons and add them
-        VBox buttonBox = new VBox(20);  
+
+        // Button box
+        VBox buttonBox = new VBox(20);
         buttonBox.getChildren().addAll(sell, add);
         buttonBox.setAlignment(Pos.CENTER_LEFT);
 
-        // Set the buttonBox in a position on the layout, like at the top
         root.setCenter(buttonBox);
 
-        // Optionally add other elements (like `listbooks`) to different regions of the BorderPane
-        VBox listBox = new VBox(1);
+        // ListView box
+        VBox listBox = new VBox(10);
         listBox.setPadding(new Insets(10));
         listBox.setPrefWidth(400);
         listBox.setAlignment(Pos.CENTER_LEFT);
-       
 
         HBox header = new HBox();
         header.setStyle("-fx-background-color: #E1AD01;");
@@ -114,12 +113,11 @@ private Book selected;
 
         Label headerLabel = new Label("Used Book Store");
         headerLabel.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-        headerLabel.setTextFill(Color.DARKRED); // Set text color to dark red
+        headerLabel.setTextFill(Color.DARKRED);
 
         header.getChildren().add(headerLabel);
-        root.setTop(header); // Add header to the top of the BorderPane	
-        
-        //Create combo boxes for the sort options
+        root.setTop(header); // Add header to the top of the BorderPane
+
         HBox sortBox = new HBox(15);
         ComboBox<String> sortBy = new ComboBox<>();
         sortBy.setPromptText("Sort By");
@@ -129,37 +127,40 @@ private Book selected;
         category.getItems().addAll("");
         sortBox.getChildren().addAll(sortBy, category);
         sortBox.setAlignment(Pos.TOP_LEFT);
-        
-        
-        
-        //add the filters to the left box
+
         listBox.getChildren().addAll(sortBox, listbooks);
-        root.setLeft(listBox);  
+        root.setLeft(listBox);
+
         HBox topRightBox = new HBox();
         topRightBox.setAlignment(Pos.TOP_RIGHT);
-        topRightBox.setPadding(new Insets(10, 15, 0, 0)); // Add some padding to position it
-
-        //Add cart button to the top right corner
+        topRightBox.setPadding(new Insets(10, 15, 0, 0));
         topRightBox.getChildren().add(cart);
-        
-        // Add the "Create Account" button HBox to the top of the BorderPane
+
         root.setRight(topRightBox);
-       
-        
-        // Create the scene with the root layout
+
+        // Create the scene
         Scene scene = new Scene(root, 1300, 600);
         userStage.setScene(scene);
-        
+
         // Show the stage
         userStage.show();
-	}
-	
-	private void updateListFromDataBase() {
-		
-	}
-	
-	private void add() {
-		
-	}
+    }
 
+    private void loadBooksFromFile() {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("BooksForSale.txt"))) {
+            DataManager.getSharedBooks().clear(); // Clear existing list to prevent duplicates
+            while (true) {
+                try {
+                    Book temp = (Book) ois.readObject();
+                    DataManager.getSharedBooks().add(temp); // Add books to shared list
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (IOException e) {
+            if (!(e instanceof java.io.EOFException)) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
