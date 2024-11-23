@@ -5,7 +5,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.scene.image.ImageView;
 
-public class ListViewCell extends ListCell<Book> {
+public class ListViewCell extends ListCell<Book> {//Declaration of UI components for the cell 
     private HBox content;
     private Text name;
     private Text author;
@@ -14,7 +14,7 @@ public class ListViewCell extends ListCell<Book> {
 
     public ListViewCell() {
         super();
-        name = new Text();
+        name = new Text(); // Initialization of text and image components 
         author = new Text();
         category = new Text();
         thumbnail = new ImageView();
@@ -33,6 +33,7 @@ public class ListViewCell extends ListCell<Book> {
             author.setText("Author: " + book.getAuthor());
             category.setText("Category: " + book.getCategory());
             thumbnail.setImage(book.getThumbnail());
+            // Set the entire content as graphic for the cell
             setGraphic(content);
         }
     }
