@@ -1,1 +1,56 @@
 /* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+
+.list-view { 
+  -fx-background-color: #f4f4f4;  /* Style for the ListView */
+   -fx-border-color: #cccccc;
+    -fx-border-radius: 5px;
+  -fx-padding: 10px;
+  -fx-front-size: 14px;
+} 
+.list-view .cell { /* Style for the objects in  ListView */
+  -fx-background-color: white;
+   -fx-border-color: #dcdcdc;
+    -fx-border-width: 1px;
+  -fx-padding: 10px;
+  -fx-alignment: center-left;
+} 
+.list-view .cell > .content {
+   -fx-spacing: 10px;
+}
+.list-view .cell > .content > .image-view {
+   -fx-fit-width: 50px; 
+    -fx-fit-height: 75px;
+     -fx_preserve-ratio: true;
+}
+.list-view .cell > .content > .text {/* Style for text elements */
+   -fx-font-size: 14px; 
+    -fx-fill: #333333;
+}
+.list-view .cell > .content > .text.name {
+   -fx-font-weight: bold; 
+    -fx-text-fill: #000000;
+
+}
+
+.list-view .cell > .content > .text.author {
+   -fx-font-style: italic; 
+    -fx-text-fill: #000000;
+
+}
+
+.list-view .cell > .content > .text.category {
+   -fx-font-style: italic; 
+    -fx-text-fill: #777777;
+
+}
+
+
+
+
+
+
+
+
+
+
+
