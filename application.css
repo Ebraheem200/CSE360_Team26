@@ -1,4 +1,4 @@
-/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+/* JavaFX CSS - Leave this comment until you have at least create one rule that uses -fx-Property */
 
 .list-view { 
   -fx-background-color: #f4f4f4;  /* Style for the ListView */
@@ -26,19 +26,19 @@
    -fx-font-size: 14px; 
     -fx-fill: #333333;
 }
-.list-view .cell > .content > .text.name {
+.list-view .cell > .content > .text.name {/* Style for book */
    -fx-font-weight: bold; 
     -fx-text-fill: #000000;
 
 }
 
-.list-view .cell > .content > .text.author {
+.list-view .cell > .content > .text.author {/* Style for author*/
    -fx-font-style: italic; 
     -fx-text-fill: #000000;
 
 }
 
-.list-view .cell > .content > .text.category {
+.list-view .cell > .content > .text.category {/* Style for category */
    -fx-font-style: italic; 
     -fx-text-fill: #777777;
 
